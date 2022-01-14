@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\POSOfferBox.Data\POSOfferBox.Data.csproj" />
+    <ProjectReference Include="..\POSOfferBox.Repo\POSOfferBox.Repo.csproj" />
+  </ItemGroup>
+
+</Project>
