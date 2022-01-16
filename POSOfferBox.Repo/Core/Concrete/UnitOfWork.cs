@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using POSOfferBox.Repo.Core.Abstract;
 using POSOfferBox.Repo.Core.DTO;
 using System;
@@ -9,9 +10,11 @@ using System.Threading.Tasks;
 
 namespace POSOfferBox.Repo.Core.Concrete
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         protected readonly DbContext _context;
+        // Track whether Dispose has been called.
+        private bool _Disposed = false;
         public UnitOfWork(DbContext context)
         {
             _context = context;
@@ -22,12 +25,32 @@ namespace POSOfferBox.Repo.Core.Concrete
 
         public void Dispose()
         {
-            _context.Dispose();
+            //_context.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public IDbContextTransaction CreateTransaction()
+        {
+            return this._context.Database.BeginTransaction();
         }
 
         public async Task DisposeAsync()
         {
             await _context.DisposeAsync();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this._Disposed)
+            {
+                if (disposing && _context != null)
+                {
+                    _context.Dispose();
+                }
+
+                _Disposed = true;
+            }
         }
 
         public async Task<ResponseDTO> SaveAsync()

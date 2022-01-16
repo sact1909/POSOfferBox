@@ -15,6 +15,11 @@ using POSOfferBox.Repo.Core.Abstract;
 using POSOfferBox.Repo.Core.Concrete;
 using POSOfferBox.Repo.Core.Factory.Abstract;
 using POSOfferBox.Repo.Core.Factory.Concrete;
+using POSOfferBox.Auth.Middleware;
+using POSOfferBox.Auth.Helpers;
+using POSOfferBox.Auth.Services;
+using Utilities.CrypHelpers;
+using System.Collections.Generic;
 
 namespace POSOfferBox
 {
@@ -35,7 +40,31 @@ namespace POSOfferBox
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "POSOfferBox", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization:Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                            },
+                            new List<string>()
+                        }
+                    });
             });
+
+
+            services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IHashHelper, HashHelper>();
 
         }
 
@@ -71,8 +100,14 @@ namespace POSOfferBox
 
             app.UseRouting();
 
-            //app.UseAuthorization();
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
+            //app.UseAuthorization();
+            app.UseJwtMiddleware();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

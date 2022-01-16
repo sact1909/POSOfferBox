@@ -1,4 +1,5 @@
-﻿using POSOfferBox.Repo.Core.DTO;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using POSOfferBox.Repo.Core.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace POSOfferBox.Repo.Core.Abstract
 {
     public interface IUnitOfWork
     {
+        IDbContextTransaction CreateTransaction();
         Task<ResponseDTO> SaveAsync();
     }
 }

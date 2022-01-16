@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\POSOfferBox.Auth\POSOfferBox.Auth.csproj" />
     <ProjectReference Include="..\POSOfferBox.BL\POSOfferBox.BL.csproj" />
     <ProjectReference Include="..\POSOfferBox.Data\POSOfferBox.Data.csproj" />
     <ProjectReference Include="..\POSOfferBox.Repo\POSOfferBox.Repo.csproj" />
